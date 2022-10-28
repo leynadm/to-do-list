@@ -6,10 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Another Random To-Do List</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
-    <script src="main.js"></script>
+    <script type="module" src="main.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    
+
+    <div class="task-container">
+
+        <div class="new-task">
+
+            <div class="button-container">
+                <button class="add-task-button"><span class="material-symbols-outlined">add</span></button>
+                <div class="button-label">Add task</div>
+            </div>
+
+            <div class="new-task-fields">
+                <input type="text" class="task-name" placeholder="Your task name">
+                <input type="text" class="task-description" placeholder="Your task description...">
+                <input type="date" class="task-deadline">
+                <input type="hidden" class="task-status">
+                <input type="hidden" class="task-priority">
+                
+                <div class="task-buttons">
+                    <div class="priority-buttons">
+                        <button>Oh, sh#t!</button>
+                        <button>All right.</button>
+                        <button>World peace...</button>
+                    </div>
+                    <div class="utility-buttons">
+                        <button class="save-task">Save</button>
+                        <button class="cancel-task">Cancel</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        
+        
+        <div class="tasks">
+
+        </div>
+    </div>
+
+    <div class="project-container">
+        <button class="add-project-button">Project</button>
+
+        <div class="projects">
+
+        </div>
+
+    </div>
+
 </body>
 </html>

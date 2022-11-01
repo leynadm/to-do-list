@@ -12,7 +12,6 @@
 <body>
 
     <div class="task-container">
-
         <div class="new-task">
 
             <div class="button-container">
@@ -21,9 +20,9 @@
             </div>
 
             <div class="new-task-fields">
-                <input type="text" class="task-name" placeholder="Your task name">
+                <input type="text" class="task-name" placeholder="Your task name" required minlength="1">
                 <input type="text" class="task-description" placeholder="Your task description...">
-                <input type="date" class="task-deadline">
+                <input type="date" class="task-deadline" required>
                 <input type="hidden" class="task-status">
                 <input type="hidden" class="task-priority">
                 
@@ -40,9 +39,8 @@
                 </div>
 
             </div>
-        </div>
-
         
+        </div>
         
         <div class="tasks">
 

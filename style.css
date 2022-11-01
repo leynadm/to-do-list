@@ -29,7 +29,6 @@ body {
 
 .task-container{
     display: grid;
-    grid-template-rows: 1fr 9fr;
     grid-column: 2/3;
     align-items: center;
 }
@@ -66,6 +65,13 @@ body {
     display: grid;
     grid-template-rows: 1fr 2fr;
     transition: width 2s, height 2s;
+}
+
+.new-added-fields{
+    display: grid;
+    grid-template-rows: 1fr 2fr;
+    transition: width 2s, height 2s;
+    border: 1px solid black;
 }
 
 /*

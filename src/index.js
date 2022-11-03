@@ -16,7 +16,7 @@ import { compareAsc, format } from 'date-fns'
                 'task-name':toDoListView.cacheDom().task_name,
                 'task-description':toDoListView.cacheDom().task_description,
                 'task-deadline':toDoListView.cacheDom().task_deadline,
-                'task-status':toDoListView.cacheDom().task_status,
+                'task-status':'pending',
                 'task-priority':toDoListView.cacheDom().task_priority,
                 'task-timestamp':format(new Date(), 'yyyy-MM-dd HH:mm:ss')
             }
@@ -91,7 +91,7 @@ import { compareAsc, format } from 'date-fns'
             let task_description = document.querySelector('.task-description').value;
             let task_deadline = document.querySelector('.task-deadline').value;
             let task_status = document.querySelector('.task-status').value;
-            let task_priority = document.querySelector('.task-priority').value;
+            let task_priority = document.querySelector('#task-priority').value;
 
             return{
                 new_task,
@@ -146,30 +146,52 @@ import { compareAsc, format } from 'date-fns'
                 create_new_added_fields.classList.add('new-added-fields');
                 toDoListView.cacheDom().tasks.appendChild(create_new_added_fields);
                 
+                let create_task_high_view = document.createElement('div');
+                create_task_high_view.classList.add('task-high-view');
+                create_new_added_fields.appendChild(create_task_high_view);
+
                 let create_task_name = document.createElement('div')
                 create_task_name.classList.add('task-name');
                 create_task_name.textContent = element['task-name'];
-                create_new_added_fields.appendChild(create_task_name);
+                create_task_high_view.appendChild(create_task_name);
                 
                 let create_task_description = document.createElement('div');
                 create_task_description.classList.add('task-description');
                 create_task_description.textContent = element['task-description'];
                 create_new_added_fields.appendChild(create_task_description);
                 
+                let create_task_interaction = document.createElement('div');
+                create_task_interaction.classList.add('task-interaction');
+                create_new_added_fields.appendChild(create_task_interaction);
+
+                let create_button_delete = document.createElement('button');
+                create_button_delete.classList.add('button-delete','material-symbols-outlined');
+                create_button_delete.textContent = 'delete';
+                create_task_interaction.appendChild(create_button_delete);
+
+                let create_button_complete = document.createElement('button');
+                create_button_complete.classList.add('button-complete','material-symbols-outlined');
+                create_button_complete.textContent = 'task';
+                create_task_interaction.appendChild(create_button_complete);
+
+                let create_task_details = document.createElement('div');
+                create_task_details.classList.add('task-details');
+                create_new_added_fields.appendChild(create_task_details);
+
                 let create_task_deadline = document.createElement('div');
                 create_task_deadline.classList.add('task-deadline');
                 create_task_deadline.textContent = element['task-deadline'];
-                create_new_added_fields.appendChild(create_task_deadline);
+                create_task_details.appendChild(create_task_deadline);
 
                 let create_task_status = document.createElement('div');
                 create_task_status.classList.add('task-status');
                 create_task_status.textContent = element['task-status'];
-                create_new_added_fields.appendChild(create_task_status);
+                create_task_details.appendChild(create_task_status);
 
                 let create_task_priority = document.createElement('div');
                 create_task_priority.classList.add('task-priority');
                 create_task_priority.textContent = element['task-priority'];
-                create_new_added_fields.appendChild(create_task_priority);
+                create_task_details.appendChild(create_task_priority);
                 
             });
         },
@@ -177,37 +199,57 @@ import { compareAsc, format } from 'date-fns'
         displayLastAddedTask: function(){
             
             let lastAddedTask = toDoList.getLastAddedTask();
-            console.log('inside displayLastAddedTask');
-            console.log(lastAddedTask);
 
             let create_new_added_fields = document.createElement('div');
             create_new_added_fields.classList.add('new-added-fields');
             toDoListView.cacheDom().tasks.appendChild(create_new_added_fields);
             
+            let create_task_high_view = document.createElement('div');
+            create_task_high_view.classList.add('task-high-view');
+            create_new_added_fields.appendChild(create_task_high_view);
+
             let create_task_name = document.createElement('div')
             create_task_name.classList.add('task-name');
             create_task_name.textContent = lastAddedTask['task-name'];
-            create_new_added_fields.appendChild(create_task_name);
+            create_task_high_view.appendChild(create_task_name);
             
             let create_task_description = document.createElement('div');
             create_task_description.classList.add('task-description');
             create_task_description.textContent = lastAddedTask['task-description'];
             create_new_added_fields.appendChild(create_task_description);
             
+            let create_task_interaction = document.createElement('div');
+            create_task_interaction.classList.add('task-interaction');
+            create_new_added_fields.appendChild(create_task_interaction);
+
+            let create_button_delete = document.createElement('button');
+            create_button_delete.classList.add('button-delete','material-symbols-outlined');
+            create_button_delete.textContent = 'delete';
+            create_task_interaction.appendChild(create_button_delete);
+
+            let create_button_complete = document.createElement('button');
+            create_button_complete.classList.add('button-complete','material-symbols-outlined');
+            create_button_complete.textContent = 'task';
+            create_task_interaction.appendChild(create_button_complete);
+
+            let create_task_details = document.createElement('div');
+            create_task_details.classList.add('task-details');
+            create_new_added_fields.appendChild(create_task_details);
+
             let create_task_deadline = document.createElement('div');
             create_task_deadline.classList.add('task-deadline');
             create_task_deadline.textContent = lastAddedTask['task-deadline'];
-            create_new_added_fields.appendChild(create_task_deadline);
+            create_task_details.appendChild(create_task_deadline);
 
             let create_task_status = document.createElement('div');
             create_task_status.classList.add('task-status');
             create_task_status.textContent = lastAddedTask['task-status'];
-            create_new_added_fields.appendChild(create_task_status);
+            create_task_details.appendChild(create_task_status);
 
             let create_task_priority = document.createElement('div');
             create_task_priority.classList.add('task-priority');
             create_task_priority.textContent = lastAddedTask['task-priority'];
-            create_new_added_fields.appendChild(create_task_priority);
+            create_task_details.appendChild(create_task_priority);
            
         },
 

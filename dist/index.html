@@ -22,19 +22,29 @@
             <div class="new-task-fields">
                 <input type="text" class="task-name" placeholder="Your task name" required minlength="1">
                 <input type="text" class="task-description" placeholder="Your task description...">
-                <input type="date" class="task-deadline" required>
                 <input type="hidden" class="task-status">
                 <input type="hidden" class="task-priority">
                 
                 <div class="task-buttons">
-                    <div class="priority-buttons">
-                        <button>Oh, sh#t!</button>
-                        <button>All right.</button>
-                        <button>World peace...</button>
+
+                    <div class="time-inputs">
+                        <input type="date" class="task-deadline" required>
+                    
+                        <div class="task-priority-list">
+                            <input list="priority" id="task-priority">
+                            <datalist id="priority">
+                            <option value="Oh, sh#t!">
+                            <option value="Sometimes soon">
+                            <option value="Meh">
+                            </datalist>
+
+                        </div>
+                    
                     </div>
+
                     <div class="utility-buttons">
-                        <button class="save-task">Save</button>
-                        <button class="cancel-task">Cancel</button>
+                        <button class="save-task material-symbols-outlined">add_task</button>
+                        <button class="cancel-task material-symbols-outlined">cancel</button>
                     </div>
                 </div>
 

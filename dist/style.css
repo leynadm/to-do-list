@@ -53,9 +53,12 @@ body {
 
 .task-buttons {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
 }
 
+.time-inputs{
+    display: flex;
+}
 
 .new-task-fields {
     display: none;
@@ -63,15 +66,47 @@ body {
 
 .active-new-task-fields {
     display: grid;
-    grid-template-rows: 1fr 2fr;
+    grid-template-rows: 1fr 2fr 1fr;
     transition: width 2s, height 2s;
 }
 
 .new-added-fields{
     display: grid;
-    grid-template-rows: 1fr 2fr;
-    transition: width 2s, height 2s;
-    border: 1px solid black;
+    justify-content: space-between;
+}
+
+.task-interaction{
+    display: flex;
+    grid-column: 2/3;
+    grid-row: 1/4;
+    justify-content: center;
+    align-items: center;
+}
+
+.task-description-hidden{
+    display: none;
+}
+
+.task-description-shown {
+    display: block;
+}
+
+.task-details{
+    display: flex;
+    gap: 1rem;
+}
+
+.utility-buttons{
+    display: flex;
+}
+
+button {
+    background-color: transparent;
+}
+
+.material-symbols-outlined{
+    color: black;
+    border: none;
 }
 
 /*
@@ -80,3 +115,11 @@ body {
     grid-template-rows: 1fr 2fr;
     display: block;
 }*/
+
+.task-priority-list {
+    width:fit-content;
+}
+
+.task-status{
+    display: none;
+}

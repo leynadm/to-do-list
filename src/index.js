@@ -1,4 +1,5 @@
 import { compareAsc, format } from 'date-fns'
+import { th } from 'date-fns/locale';
 
 //=> '2014-02-11'
 
@@ -10,9 +11,28 @@ import { compareAsc, format } from 'date-fns'
 
         submitTasksToStorage: function() {
 
-            let lastIndex = localStorage.length+1;
-         
-            let taskObject = {
+            let arrayOfIndex = [];
+
+            let lastIndex;
+
+            if(localStorage.length==0){
+                lastIndex = 0;
+            }
+            
+            // get a complete array of indexes
+            Object.keys(localStorage).forEach(function(key){
+                let localStorageKey = localStorage.getItem(key);
+                let parsedLocalStorageObj = JSON.parse(localStorageKey);
+                arrayOfIndex.push(parsedLocalStorageObj['task-id']);
+             });
+            
+             // find the highest 
+             if(localStorage.length!= 0){
+                lastIndex = Math.max(...arrayOfIndex);
+            }
+
+             let taskObject = {
+                'task-id':lastIndex+1,
                 'task-name':toDoListView.cacheDom().task_name,
                 'task-description':toDoListView.cacheDom().task_description,
                 'task-deadline':toDoListView.cacheDom().task_deadline,
@@ -20,8 +40,8 @@ import { compareAsc, format } from 'date-fns'
                 'task-priority':toDoListView.cacheDom().task_priority,
                 'task-timestamp':format(new Date(), 'yyyy-MM-dd HH:mm:ss')
             }
-
-            localStorage.setItem(lastIndex,JSON.stringify(taskObject));   
+                
+            localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
             
         }
     }
@@ -36,16 +56,47 @@ import { compareAsc, format } from 'date-fns'
         getCurrentTasks: function(){
 
             let listStorageArr = [];
-            let mappedListStorageArr = new Map();
-            let localStorageKey;
             let index = 1;
 
+
+            // I HAVE TO FIX THIS FUCKERY AS I CANNOT GET THE LAST ITEM ADDED TO ARRAY
+            
+            
+            for(var i in localStorage){
+                if(localStorage.hasOwnProperty(i)){
+                    let localStorageObj = localStorage[i];
+                    let parsedLocalStorageObj = JSON.parse(localStorageObj);
+                    //console.log(parsedLocalStorageObj);
+                    if(parsedLocalStorageObj['task-status']=='pending'){
+                        listStorageArr.push(parsedLocalStorageObj);
+                    }
+                }
+            }
+
+            /*
+            let localStorageObjToModify = localStorage.getItem(task_parsed_id);
+            let localStorageObjModified = JSON.parse(localStorageObjToModify);
+            */
+
+            //console.log(listStorageArr);
+            listStorageArr.sort((a, b) => {
+                return a['task-id'] - b['task-id'];
+            });
+
+            //console.log(listStorageArr);
+            
+            //listStorageArr.sort(function(a, b){return a-b});
+            // THE ISSUE IS THAT NOW WE CANNOT GET THE LAST ITEM ADDED TO AN ARRAY. LET"S SEE...
+            
+            /*
             for(let i = 1;i <= localStorage.length;i++){
                 let localStorageObj = localStorage.getItem(i);
                 let parsedLocalStorageObj = JSON.parse(localStorageObj);
                 listStorageArr.push(parsedLocalStorageObj);
-            }
+            }*/
 
+            //listStorageArr.sort((a, b) => a['task-id'].localeCompare(b.['task-id']));
+            
             return listStorageArr
         },
 
@@ -53,10 +104,19 @@ import { compareAsc, format } from 'date-fns'
 
             let listStorageArr = this.getCurrentTasks();
 
+            //console.log('list storage inside the last added task');
+
+            //console.log(listStorageArr);
+
             let lastItemAdded = listStorageArr[listStorageArr.length-1];
+            
+            //console.log(lastItemAdded);
 
             let lastItemAddedArr = [];
+
             lastItemAddedArr.push(lastItemAdded)
+            
+            //console.log(lastItemAddedArr);
 
             return lastItemAddedArr
         },
@@ -97,6 +157,8 @@ import { compareAsc, format } from 'date-fns'
             let task_status = document.querySelector('.task-status').value;
             let task_priority = document.querySelector('#task-priority').value;
 
+            let button_delete = document.querySelectorAll('.button-delete');
+           
             return{
                 new_task,
                 new_task_fields,
@@ -127,6 +189,10 @@ import { compareAsc, format } from 'date-fns'
             toDoListView.cacheDom().save_task.addEventListener('click',toDoList.saveTaskAndDisplayIt);
         },
 
+        bindEventsCreatedTasks: function(){
+
+        },
+
         render: function(tasksToLoad){
 
 
@@ -141,58 +207,73 @@ import { compareAsc, format } from 'date-fns'
                 listStorageArr = toDoList.getLastAddedTask();
             }
 
+            
             listStorageArr.forEach(element => {
-               
-                let create_new_added_fields = document.createElement('div');
-                create_new_added_fields.classList.add('new-added-fields');
-                toDoListView.cacheDom().tasks.appendChild(create_new_added_fields);
                 
-                let create_task_high_view = document.createElement('div');
-                create_task_high_view.classList.add('task-high-view');
-                create_new_added_fields.appendChild(create_task_high_view);
-    
-                let create_task_name = document.createElement('div')
-                create_task_name.classList.add('task-name');
-                create_task_name.textContent = element['task-name'];
-                create_task_high_view.appendChild(create_task_name);
-                
-                let create_task_description = document.createElement('div');
-                create_task_description.classList.add('task-description');
-                create_task_description.textContent = element['task-description'];
-                create_new_added_fields.appendChild(create_task_description);
-                
-                let create_task_interaction = document.createElement('div');
-                create_task_interaction.classList.add('task-interaction');
-                create_new_added_fields.appendChild(create_task_interaction);
-    
-                let create_button_delete = document.createElement('button');
-                create_button_delete.classList.add('button-delete','material-symbols-outlined');
-                create_button_delete.textContent = 'delete';
-                create_task_interaction.appendChild(create_button_delete);
-    
-                let create_button_complete = document.createElement('button');
-                create_button_complete.classList.add('button-complete','material-symbols-outlined');
-                create_button_complete.textContent = 'task';
-                create_task_interaction.appendChild(create_button_complete);
-    
-                let create_task_details = document.createElement('div');
-                create_task_details.classList.add('task-details');
-                create_new_added_fields.appendChild(create_task_details);
-    
-                let create_task_deadline = document.createElement('div');
-                create_task_deadline.classList.add('task-deadline');
-                create_task_deadline.textContent = element['task-deadline'];
-                create_task_details.appendChild(create_task_deadline);
-    
-                let create_task_status = document.createElement('div');
-                create_task_status.classList.add('task-status');
-                create_task_status.textContent = element['task-status'];
-                create_task_details.appendChild(create_task_status);
-    
-                let create_task_priority = document.createElement('div');
-                create_task_priority.classList.add('task-priority');
-                create_task_priority.textContent = element['task-priority'];
-                create_task_details.appendChild(create_task_priority);
+                if(element!= null){
+
+                    if(element['task-status']=="pending") {
+
+                        let create_new_added_fields = document.createElement('div');
+                        create_new_added_fields.classList.add('new-added-fields');
+                        toDoListView.cacheDom().tasks.appendChild(create_new_added_fields);
+                        create_new_added_fields.addEventListener('click',this.hideOrShowDescription);
+
+                        let create_task_high_view = document.createElement('div');
+                        create_task_high_view.classList.add('task-high-view');
+                        create_new_added_fields.appendChild(create_task_high_view);
+                        
+                        let create_task_name = document.createElement('div')
+                        create_task_name.classList.add('task-name');
+                        create_task_name.textContent = element['task-name'];
+                        create_task_high_view.appendChild(create_task_name);
+                        
+                        let create_task_description = document.createElement('div');
+                        create_task_description.classList.add('task-description-hidden');
+                        create_task_description.textContent = element['task-description'];
+                        create_new_added_fields.appendChild(create_task_description);
+                        
+                        let create_task_interaction = document.createElement('div');
+                        create_task_interaction.classList.add('task-interaction');
+                        create_new_added_fields.appendChild(create_task_interaction);
+            
+                        let create_button_delete = document.createElement('button');
+                        create_button_delete.classList.add('button-delete','material-symbols-outlined');
+                        create_button_delete.textContent = 'delete';
+                        create_task_interaction.appendChild(create_button_delete);
+                        create_button_delete.addEventListener('click',toDoListView.addEventToDeleteButton);
+        
+                        let create_button_complete = document.createElement('button');
+                        create_button_complete.classList.add('button-complete','material-symbols-outlined');
+                        create_button_complete.textContent = 'task';
+                        create_task_interaction.appendChild(create_button_complete);
+                        create_button_complete.addEventListener('click',toDoListView.addEventToCompleteButton);
+        
+                        let create_task_details = document.createElement('div');
+                        create_task_details.classList.add('task-details');
+                        create_new_added_fields.appendChild(create_task_details);
+            
+                        let create_task_deadline = document.createElement('div');
+                        create_task_deadline.classList.add('task-deadline');
+                        create_task_deadline.textContent = element['task-deadline'];
+                        create_task_details.appendChild(create_task_deadline);
+            
+                        let create_task_status = document.createElement('div');
+                        create_task_status.classList.add('task-status');
+                        create_task_status.textContent = element['task-status'];
+                        create_task_details.appendChild(create_task_status);
+            
+                        let create_task_priority = document.createElement('div');
+                        create_task_priority.classList.add('task-priority');
+                        create_task_priority.textContent = element['task-priority'];
+                        create_task_details.appendChild(create_task_priority);
+        
+                        let create_task_id = document.createElement('div');
+                        create_task_id.classList.add('task-id');
+                        create_task_id.textContent = element['task-id'];
+                        create_task_details.appendChild(create_task_id);
+                    }
+                }
             });
         },
 
@@ -204,6 +285,28 @@ import { compareAsc, format } from 'date-fns'
             toDoListView.cacheDom().new_task_fields.classList.remove('active-new-task-fields');
         },
 
+        addEventToDeleteButton: function(){
+            let task_parsed_info = this.parentNode.parentNode;
+            let task_parsed_details = task_parsed_info.querySelector('.task-details');
+            let task_parsed_id = task_parsed_details.querySelector('.task-id').textContent;
+            localStorage.removeItem(task_parsed_id);
+            task_parsed_info.remove();
+        },
+
+        addEventToCompleteButton: function(){
+
+            let task_parsed_info = this.parentNode.parentNode;
+            let task_parsed_details = task_parsed_info.querySelector('.task-details');
+            let task_parsed_status = task_parsed_details.querySelector('.task-status');
+            let task_parsed_id = task_parsed_details.querySelector('.task-id').textContent;
+            
+            let localStorageObjToModify = localStorage.getItem(task_parsed_id);
+            let localStorageObjModified = JSON.parse(localStorageObjToModify);
+            localStorageObjModified['task-status']="complete";
+            localStorage.setItem(task_parsed_id,JSON.stringify(localStorageObjModified));   
+            
+        },
+
         displayStoredTasks: function(){
 
             toDoListView.render("renderAllTasks");            
@@ -213,7 +316,17 @@ import { compareAsc, format } from 'date-fns'
         displayLastAddedTask: function(){
             
             toDoListView.render("renderOneTask");
-            
+
+        },
+
+        hideOrShowDescription: function() {
+            let task_info = this;
+            let task_description_field = task_info.querySelector('.task-description-hidden');
+            if (task_description_field.classList.contains('task-description-shown')){
+                task_description_field.classList.remove('task-description-shown')
+            } else{
+                task_description_field.classList.add('task-description-shown'); 
+            }
         },
 
         cleanInputsWithTaskAfterSubmit: function() {

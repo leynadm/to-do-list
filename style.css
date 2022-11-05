@@ -23,7 +23,7 @@ time, mark, audio, video {
 
 body {
     display: grid;
-    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-columns: 1fr 6fr 1fr;
     
 }
 
@@ -39,7 +39,22 @@ body {
     align-items: center;
 }
 
+
+.new-project-fields{
+    display: none;
+}
+
+.active-new-project-fields {
+    display: grid;
+    grid-template-rows: 1fr 2fr 1fr;
+    transition: width 2s, height 2s;
+}
+
 .new-task{
+    min-width: 100%;
+}
+
+.new-project{
     min-width: 100%;
 }
 
@@ -49,10 +64,12 @@ body {
     margin: 1rem;
 }
 
+
+/*
 .task-buttons {
     display: flex;
     justify-content: space-around;
-}
+}*/
 
 .time-inputs{
     display: flex;
@@ -96,6 +113,7 @@ body {
 
 .utility-buttons{
     display: flex;
+    justify-content: right;
 }
 
 button {
@@ -107,16 +125,11 @@ button {
     border: none;
 }
 
-/*
-.active, .new-task-fields{
-    display: grid;
-    grid-template-rows: 1fr 2fr;
-    display: block;
-}*/
 
-.task-priority-list {
-    width:fit-content;
-}
+/*
+#task-priority{
+    width: 8rem;
+}*/
 
 .task-status{
     display: none;
@@ -128,6 +141,11 @@ button {
 
 .project-buttons{
     display: flex;
-    justify-content: left;
+    align-items: center;
     margin: 1rem;
+}
+
+.project-utility-buttons{
+    display: flex;
+    justify-content: right;
 }

@@ -26,7 +26,10 @@ import { th } from 'date-fns/locale';
                 arrayOfIndex.push(parsedLocalStorageObj['task-id']);
              });
             
-             // find the highest 
+             /* find the highest id inside the array of indexes to then
+             calculate the index of the next item to submit to the local
+             storage
+             */ 
              if(localStorage.length!= 0){
                 lastIndex = Math.max(...arrayOfIndex);
             }
@@ -38,10 +41,14 @@ import { th } from 'date-fns/locale';
                 'task-deadline':toDoListView.cacheDom().task_deadline,
                 'task-status':'pending',
                 'task-priority':toDoListView.cacheDom().task_priority,
-                'task-timestamp':format(new Date(), 'yyyy-MM-dd HH:mm:ss')
+                'task-timestamp':format(new Date(), 'dd-MM-yyyy HH:mm:ss')
             }
                 
             localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
+            
+        },
+
+        submitProjectToStorage: function() {
             
         }
     }
@@ -57,46 +64,21 @@ import { th } from 'date-fns/locale';
 
             let listStorageArr = [];
             let index = 1;
-
-
-            // I HAVE TO FIX THIS FUCKERY AS I CANNOT GET THE LAST ITEM ADDED TO ARRAY
-            
             
             for(var i in localStorage){
                 if(localStorage.hasOwnProperty(i)){
                     let localStorageObj = localStorage[i];
                     let parsedLocalStorageObj = JSON.parse(localStorageObj);
-                    //console.log(parsedLocalStorageObj);
                     if(parsedLocalStorageObj['task-status']=='pending'){
                         listStorageArr.push(parsedLocalStorageObj);
                     }
                 }
             }
 
-            /*
-            let localStorageObjToModify = localStorage.getItem(task_parsed_id);
-            let localStorageObjModified = JSON.parse(localStorageObjToModify);
-            */
-
-            //console.log(listStorageArr);
             listStorageArr.sort((a, b) => {
                 return a['task-id'] - b['task-id'];
             });
 
-            //console.log(listStorageArr);
-            
-            //listStorageArr.sort(function(a, b){return a-b});
-            // THE ISSUE IS THAT NOW WE CANNOT GET THE LAST ITEM ADDED TO AN ARRAY. LET"S SEE...
-            
-            /*
-            for(let i = 1;i <= localStorage.length;i++){
-                let localStorageObj = localStorage.getItem(i);
-                let parsedLocalStorageObj = JSON.parse(localStorageObj);
-                listStorageArr.push(parsedLocalStorageObj);
-            }*/
-
-            //listStorageArr.sort((a, b) => a['task-id'].localeCompare(b.['task-id']));
-            
             return listStorageArr
         },
 
@@ -104,26 +86,22 @@ import { th } from 'date-fns/locale';
 
             let listStorageArr = this.getCurrentTasks();
 
-            //console.log('list storage inside the last added task');
-
-            //console.log(listStorageArr);
-
             let lastItemAdded = listStorageArr[listStorageArr.length-1];
             
-            //console.log(lastItemAdded);
-
             let lastItemAddedArr = [];
 
             lastItemAddedArr.push(lastItemAdded)
             
-            //console.log(lastItemAddedArr);
-
             return lastItemAddedArr
         },
 
         saveTaskAndDisplayIt:function(){
             toDoListModel.submitTasksToStorage();
             toDoListView.displayLastAddedTask();
+        },
+
+        saveProjectAndDisplayIt: function(){
+
         }
 
     };
@@ -150,6 +128,9 @@ import { th } from 'date-fns/locale';
             let add_project_button = document.querySelector('.add-project-button');
             let save_task = document.querySelector('.save-task');
             let cancel_task = document.querySelector('.cancel-task');
+            let save_project = document.querySelector('.save-project');
+            let cancel_project = document.querySelector('.cancel-project');
+            let new_project_fields = document.querySelector('.new-project-fields');
 
             let task_name = document.querySelector('.task-name').value;
             let task_description = document.querySelector('.task-description').value;
@@ -174,7 +155,10 @@ import { th } from 'date-fns/locale';
                 task_description,
                 task_deadline,
                 task_status,
-                task_priority
+                task_priority,
+                save_project,
+                cancel_project,
+                new_project_fields
             }
         },
 
@@ -187,6 +171,8 @@ import { th } from 'date-fns/locale';
             toDoListView.cacheDom().add_task_button.addEventListener('click',toDoListView.showAddTaskCollapsible);
             toDoListView.cacheDom().cancel_task.addEventListener('click',toDoListView.hideAddTaskCollapsible);
             toDoListView.cacheDom().save_task.addEventListener('click',toDoList.saveTaskAndDisplayIt);
+            toDoListView.cacheDom().add_project_button.addEventListener('click',toDoListView.showAddProjectCollapsible);
+            toDoListView.cacheDom().cancel_project.addEventListener('click',toDoListView.hideAddProjectCollapsible);
         },
 
         bindEventsCreatedTasks: function(){
@@ -194,7 +180,6 @@ import { th } from 'date-fns/locale';
         },
 
         render: function(tasksToLoad){
-
 
             var listStorageArr = [];
                 
@@ -207,7 +192,6 @@ import { th } from 'date-fns/locale';
                 listStorageArr = toDoList.getLastAddedTask();
             }
 
-            
             listStorageArr.forEach(element => {
                 
                 if(element!= null){
@@ -255,6 +239,7 @@ import { th } from 'date-fns/locale';
             
                         let create_task_deadline = document.createElement('div');
                         create_task_deadline.classList.add('task-deadline');
+                        console.log(element['task-deadline']);
                         create_task_deadline.textContent = element['task-deadline'];
                         create_task_details.appendChild(create_task_deadline);
             
@@ -305,6 +290,22 @@ import { th } from 'date-fns/locale';
             localStorageObjModified['task-status']="complete";
             localStorage.setItem(task_parsed_id,JSON.stringify(localStorageObjModified));   
             
+        },
+
+        showAddProjectCollapsible: function(){
+            toDoListView.cacheDom().new_project_fields.classList.add('active-new-project-fields');
+        },
+
+        hideAddProjectCollapsible: function() {
+            toDoListView.cacheDom().new_project_fields.classList.remove('active-new-project-fields');
+        },
+
+        saveProject: function(){
+
+        },
+
+        cancelProject: function(){
+
         },
 
         displayStoredTasks: function(){

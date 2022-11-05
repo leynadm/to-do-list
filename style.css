@@ -35,9 +35,7 @@ body {
 
 .project-container{
     display: grid;
-    grid-template-rows: 1fr 9fr;
     grid-column: 2/3;
-    justify-content: center;
     align-items: center;
 }
 
@@ -122,4 +120,14 @@ button {
 
 .task-status{
     display: none;
+}
+
+.task-id{
+    display: none;
+}
+
+.project-buttons{
+    display: flex;
+    justify-content: left;
+    margin: 1rem;
 }

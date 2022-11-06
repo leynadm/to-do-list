@@ -9,12 +9,12 @@ import { th } from 'date-fns/locale';
 
     const toDoListModel = {
 
-        submitTasksToStorage: function() {
-
+        submitTasksToStorage: function(taskType) {
+            
             let arrayOfIndex = [];
 
             let lastIndex;
-
+            
             if(localStorage.length==0){
                 lastIndex = 0;
             }
@@ -34,23 +34,34 @@ import { th } from 'date-fns/locale';
                 lastIndex = Math.max(...arrayOfIndex);
             }
 
-             let taskObject = {
-                'task-id':lastIndex+1,
-                'task-name':toDoListView.cacheDom().task_name,
-                'task-description':toDoListView.cacheDom().task_description,
-                'task-deadline':toDoListView.cacheDom().task_deadline,
-                'task-status':'pending',
-                'task-priority':toDoListView.cacheDom().task_priority,
-                'task-timestamp':format(new Date(), 'dd-MM-yyyy HH:mm:ss')
-            }
-                
-            localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
-            
-        },
 
-        submitProjectToStorage: function() {
-            
+            if(taskType == "standard"){
+                let taskObject = {
+                    'task-type': 'standard',
+                    'task-id':lastIndex+1,
+                    'task-name':toDoListView.cacheDom().task_name,
+                    'task-description':toDoListView.cacheDom().task_description,
+                    'task-deadline':toDoListView.cacheDom().task_deadline,
+                    'task-status':'pending',
+                    'task-priority':toDoListView.cacheDom().task_priority,
+                    'task-timestamp':format(new Date(), 'dd-MM-yyyy HH:mm:ss')
+
+                }
+                
+                localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
+                
+            } else if(taskType == "project"){
+                let taskObject = {
+                    'task-type': 'project',
+                    'task-status': 'pending',
+                    'task-id':lastIndex+1,
+                    'task-name':toDoListView.cacheDom().project_name,
+                }
+
+                localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
+            }   
         }
+            
     }
 
     // ================ Controller ==================
@@ -85,23 +96,21 @@ import { th } from 'date-fns/locale';
         getLastAddedTask: function(){
 
             let listStorageArr = this.getCurrentTasks();
-
             let lastItemAdded = listStorageArr[listStorageArr.length-1];
-            
             let lastItemAddedArr = [];
-
             lastItemAddedArr.push(lastItemAdded)
-            
             return lastItemAddedArr
         },
 
+
         saveTaskAndDisplayIt:function(){
-            toDoListModel.submitTasksToStorage();
+            toDoListModel.submitTasksToStorage("standard");
             toDoListView.displayLastAddedTask();
         },
 
         saveProjectAndDisplayIt: function(){
-
+            toDoListModel.submitTasksToStorage("project");
+            toDoListView.displayLastProjectAdded();
         }
 
     };
@@ -113,6 +122,7 @@ import { th } from 'date-fns/locale';
             this.cacheDom();
             this.bindEvents();
             this.render();
+            this.renderProjects();
             this.displayStoredTasks();
         },
 
@@ -131,7 +141,7 @@ import { th } from 'date-fns/locale';
             let save_project = document.querySelector('.save-project');
             let cancel_project = document.querySelector('.cancel-project');
             let new_project_fields = document.querySelector('.new-project-fields');
-
+            let project_name = document.querySelector('.project-name').value;
             let task_name = document.querySelector('.task-name').value;
             let task_description = document.querySelector('.task-description').value;
             let task_deadline = document.querySelector('.task-deadline').value;
@@ -158,7 +168,8 @@ import { th } from 'date-fns/locale';
                 task_priority,
                 save_project,
                 cancel_project,
-                new_project_fields
+                new_project_fields,
+                project_name
             }
         },
 
@@ -173,6 +184,7 @@ import { th } from 'date-fns/locale';
             toDoListView.cacheDom().save_task.addEventListener('click',toDoList.saveTaskAndDisplayIt);
             toDoListView.cacheDom().add_project_button.addEventListener('click',toDoListView.showAddProjectCollapsible);
             toDoListView.cacheDom().cancel_project.addEventListener('click',toDoListView.hideAddProjectCollapsible);
+            toDoListView.cacheDom().save_project.addEventListener('click',toDoList.saveProjectAndDisplayIt);
         },
 
         bindEventsCreatedTasks: function(){
@@ -190,11 +202,17 @@ import { th } from 'date-fns/locale';
             } else if(tasksToLoad == "renderOneTask"){
 
                 listStorageArr = toDoList.getLastAddedTask();
+
+            } else if(tasksToLoad == "renderOneProject"){
+
+                listStorageArr = toDoList.getLastAddedTask()
             }
+
+            console.log(listStorageArr);
 
             listStorageArr.forEach(element => {
                 
-                if(element!= null){
+                if(element['task-type']=="standard"){
 
                     if(element['task-status']=="pending") {
 
@@ -239,7 +257,6 @@ import { th } from 'date-fns/locale';
             
                         let create_task_deadline = document.createElement('div');
                         create_task_deadline.classList.add('task-deadline');
-                        console.log(element['task-deadline']);
                         create_task_deadline.textContent = element['task-deadline'];
                         create_task_details.appendChild(create_task_deadline);
             
@@ -258,8 +275,42 @@ import { th } from 'date-fns/locale';
                         create_task_id.textContent = element['task-id'];
                         create_task_details.appendChild(create_task_id);
                     }
+
+                } else if (element['task-type']=="project"){
+                    
+                    console.log('inside project type');
+
+                    let create_new_added_project = document.createElement('div');
+                    create_new_added_project.classList.add('new-added-project');
+                    toDoListView.cacheDom().projects.appendChild(create_new_added_project); 
+
+                    let create_project_name = document.createElement('div');
+                    create_project_name.classList.add('new-project-name');
+                    create_project_name.textContent = element['task-name'].toUpperCase();
+                    create_new_added_project.appendChild(create_project_name);
+
+                    let create_project_utility_buttons = document.createElement('div');
+                    create_project_utility_buttons.classList.add('new-project-utility-buttons');
+                    create_new_added_project.appendChild(create_project_utility_buttons);
+
+                    let delete_project = document.createElement('button');
+                    delete_project.classList.add('delete-project','material-symbols-outlined');
+                    delete_project.textContent = 'delete';
+                    delete_project.addEventListener('click',toDoListView.deleteProject);
+                    create_project_utility_buttons.appendChild(delete_project);
+
+                    let add_task_to_project = document.createElement('button');
+                    add_task_to_project.classList.add('add-task-to-project','material-symbols-outlined');
+                    add_task_to_project.textContent = 'add';
+                    add_task_to_project.addEventListener('click',toDoListView.addTaskToProject);
+                    create_project_utility_buttons.appendChild(add_task_to_project);
+
                 }
             });
+        },
+
+        renderProjects: function(){
+            
         },
 
         showAddTaskCollapsible: function(){
@@ -300,11 +351,11 @@ import { th } from 'date-fns/locale';
             toDoListView.cacheDom().new_project_fields.classList.remove('active-new-project-fields');
         },
 
-        saveProject: function(){
-
+        addTaskToProject: function(){
+            console.log(this.parentNode);
         },
 
-        cancelProject: function(){
+        deleteProject: function(){
 
         },
 
@@ -320,6 +371,10 @@ import { th } from 'date-fns/locale';
 
         },
 
+        displayLastProjectAdded: function(){
+            toDoListView.render("renderOneProject");
+        },
+
         hideOrShowDescription: function() {
             let task_info = this;
             let task_description_field = task_info.querySelector('.task-description-hidden');
@@ -332,6 +387,10 @@ import { th } from 'date-fns/locale';
 
         cleanInputsWithTaskAfterSubmit: function() {
 
+        },
+
+        createNewTask: function(){
+             
         }
     }
 

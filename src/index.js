@@ -203,18 +203,21 @@ import { th } from 'date-fns/locale';
 
                 listStorageArr = toDoList.getLastAddedTask();
 
-            } else if(tasksToLoad == "renderOneProject"){
+            } else if (tasksToLoad == "tasksInProjects"){
 
-                listStorageArr = toDoList.getLastAddedTask()
+                listStorageArr = toDoList.getCurrentTasks();
             }
-
-            console.log(listStorageArr);
 
             listStorageArr.forEach(element => {
                 
                 if(element['task-type']=="standard"){
 
                     if(element['task-status']=="pending") {
+
+
+                        if(tasksToLoad == "tasksInProjects"){
+
+                        }
 
                         let create_new_added_fields = document.createElement('div');
                         create_new_added_fields.classList.add('new-added-fields');
@@ -276,22 +279,38 @@ import { th } from 'date-fns/locale';
                         create_task_details.appendChild(create_task_id);
                     }
 
-                } else if (element['task-type']=="project"){
+                } 
+            });
+        },
+
+        renderProjects: function(){
+
+            var listStorageArr = [];
+
+            listStorageArr = toDoList.getCurrentTasks();
+     
+            listStorageArr.forEach(element => {
+
+                if (element['task-type']=="project"){
                     
-                    console.log('inside project type');
+                    let current_project = element['task-name'];
 
                     let create_new_added_project = document.createElement('div');
                     create_new_added_project.classList.add('new-added-project');
                     toDoListView.cacheDom().projects.appendChild(create_new_added_project); 
 
+                    let current_project_header = document.createElement('div');
+                    current_project_header.classList.add('new-project-header');
+                    create_new_added_project.appendChild(current_project_header);
+
                     let create_project_name = document.createElement('div');
                     create_project_name.classList.add('new-project-name');
                     create_project_name.textContent = element['task-name'].toUpperCase();
-                    create_new_added_project.appendChild(create_project_name);
+                    current_project_header.appendChild(create_project_name);
 
                     let create_project_utility_buttons = document.createElement('div');
                     create_project_utility_buttons.classList.add('new-project-utility-buttons');
-                    create_new_added_project.appendChild(create_project_utility_buttons);
+                    current_project_header.appendChild(create_project_utility_buttons);
 
                     let delete_project = document.createElement('button');
                     delete_project.classList.add('delete-project','material-symbols-outlined');
@@ -305,12 +324,27 @@ import { th } from 'date-fns/locale';
                     add_task_to_project.addEventListener('click',toDoListView.addTaskToProject);
                     create_project_utility_buttons.appendChild(add_task_to_project);
 
+                
+                    listStorageArr.forEach(element => {
+                        
+                        if(element['task-name']==current_project){
+                            
+                            
+
+                        }
+
+                    });
+                
                 }
+
             });
+
         },
 
-        renderProjects: function(){
-            
+        renderTasksInProject: function(){
+
+            toDoListView.render("tasksInProjects");
+
         },
 
         showAddTaskCollapsible: function(){
@@ -348,11 +382,100 @@ import { th } from 'date-fns/locale';
         },
 
         hideAddProjectCollapsible: function() {
-            toDoListView.cacheDom().new_project_fields.classList.remove('active-new-project-fields');
+            
+            let current_project_add_collapsible = this.parentNode.parentNode;
+            current_project_add_collapsible.classList.add('new-task-fields');
+            console.log(current_project_add_collapsible);
+            current_project_add_collapsible.classList.remove('active-new-task-fields');
+            //current_project_add_collapsible.remove();
+        
         },
 
         addTaskToProject: function(){
-            console.log(this.parentNode);
+
+            console.log(this.parentNode.parentNode.parentNode);
+            let project_to_append_to = this.parentNode.parentNode.parentNode;
+            
+            let dynamic_new_task_fields = document.createElement('div');
+            dynamic_new_task_fields.classList.add('active-new-task-fields');
+            project_to_append_to.appendChild(dynamic_new_task_fields);
+
+            let dynamic_task_name = document.createElement('input');
+            dynamic_task_name.type="text";
+            dynamic_task_name.classList.add('task-name');
+            dynamic_task_name.placeholder='Your task description...';
+            dynamic_new_task_fields.appendChild(dynamic_task_name);
+
+            let dynamic_task_description = document.createElement('input');
+            dynamic_task_description.type="text";
+            dynamic_task_description.classList.add('task-description');
+            dynamic_task_description.placeholder='Your task description here...';
+            dynamic_new_task_fields.appendChild(dynamic_task_description);
+
+            let dynamic_task_status = document.createElement('input');
+            dynamic_task_status.type="hidden";
+            dynamic_task_status.classList.add('task-status');
+            dynamic_task_status.textContent = "pending";
+            dynamic_new_task_fields.appendChild(dynamic_task_status);
+
+            let dynamic_task_priority = document.createElement('input');
+            dynamic_task_priority.type="hidden";
+            dynamic_task_priority.classList.add('task-priority');
+            dynamic_task_priority.textContent = "pending";
+            dynamic_new_task_fields.appendChild(dynamic_task_priority);
+          
+            let dynamic_task_buttons = document.createElement('div');
+            dynamic_task_buttons.classList.add('task-buttons');
+            dynamic_new_task_fields.appendChild(dynamic_task_buttons);
+
+            let dynamic_time_inputs = document.createElement('div');
+            dynamic_time_inputs.classList.add('time-inputs');
+            dynamic_task_buttons.appendChild(dynamic_time_inputs);
+
+            let dynamic_task_deadline = document.createElement('input');
+            dynamic_task_deadline.classList.add('task-deadline');
+            dynamic_task_deadline.type = "date";
+            dynamic_time_inputs.appendChild(dynamic_task_deadline);
+
+            let dynamic_task_list_priority_options = ['Oh, Sh#t!','Sometimes soon','Meh'];
+            
+            let dynamic_task_list_priority = document.createElement('input');
+            dynamic_task_list_priority.type = 'list';
+            dynamic_task_list_priority.id = 'task-priority';
+            dynamic_task_list_priority.setAttribute('list','priority');
+            dynamic_time_inputs.appendChild(dynamic_task_list_priority);
+
+            /*
+            let dynamic_task_list_priority_dtlst = document.createElement('datalist');
+            dynamic_task_list_priority_dtlst.id = 'task-priority'
+            
+            dynamic_task_list_priority_options.forEach(function(item){
+                var option = document.createElement('option');
+                option.value = item;
+                dynamic_task_list_priority.appendChild(option);
+            });
+
+            let dynamic_task_list_datalist = document.createElement('datalist');
+            dynamic_task_list_datalist.
+            dynamic_time_inputs.appendChild(dynamic_task_list_priority);
+            */
+            
+            let dynamic_utility_buttons = document.createElement('div');
+            dynamic_utility_buttons.classList.add('utility-buttons');
+            dynamic_task_buttons.appendChild(dynamic_utility_buttons);
+
+            let dynamic_save_task = document.createElement('button');
+            dynamic_save_task.classList.add('save-task','material-symbols-outlined');
+            dynamic_save_task.textContent = 'add_task';
+            dynamic_save_task.addEventListener('click',toDoListView.addTaskToProject);
+            dynamic_task_buttons.appendChild(dynamic_save_task);
+
+            let dynamic_cancel_task = document.createElement('button');
+            dynamic_cancel_task.classList.add('cancel-task','material-symbols-outlined');
+            dynamic_cancel_task.textContent = 'cancel';
+            dynamic_cancel_task.addEventListener('click',toDoListView.hideAddProjectCollapsible);
+            dynamic_task_buttons.appendChild(dynamic_cancel_task);
+
         },
 
         deleteProject: function(){
@@ -372,8 +495,10 @@ import { th } from 'date-fns/locale';
         },
 
         displayLastProjectAdded: function(){
-            toDoListView.render("renderOneProject");
+            toDoListView.renderProjects();
         },
+
+
 
         hideOrShowDescription: function() {
             let task_info = this;

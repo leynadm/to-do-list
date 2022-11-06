@@ -149,3 +149,9 @@ button {
     display: flex;
     justify-content: right;
 }
+
+.new-added-project{
+    display: flex;
+    justify-content: space-between;
+}
+

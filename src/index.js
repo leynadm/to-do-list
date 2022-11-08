@@ -9,7 +9,7 @@ import { th } from 'date-fns/locale';
 
     const toDoListModel = {
 
-        submitTasksToStorage: function(taskType) {
+        submitTasksToStorage: function(taskType,secondParam) {
             
             let arrayOfIndex = [];
 
@@ -45,7 +45,6 @@ import { th } from 'date-fns/locale';
                     'task-status':'pending',
                     'task-priority':toDoListView.cacheDom().task_priority,
                     'task-timestamp':format(new Date(), 'dd-MM-yyyy HH:mm:ss')
-
                 }
                 
                 localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
@@ -57,9 +56,26 @@ import { th } from 'date-fns/locale';
                     'task-id':lastIndex+1,
                     'task-name':toDoListView.cacheDom().project_name,
                 }
+                
+                localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));
 
-                localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));   
-            }   
+            }  else if (taskType = "taskInProject"){
+                
+                let taskObject = {
+                    'task-type': 'project',
+                    'task-id':lastIndex+1,
+                    'task-name': secondParam.this_task_name,
+                    'task-description': secondParam.this_task_description,
+                    'task-deadline': secondParam.this_task_deadline,
+                    'task-status':'pending',
+                    'task-priority': secondParam.this_task_priority,
+                    'task-timestamp':format(new Date(), 'dd-MM-yyyy HH:mm:ss')
+                    
+                }
+
+                localStorage.setItem(lastIndex+1,JSON.stringify(taskObject));
+                
+            }
         }
             
     }
@@ -111,6 +127,14 @@ import { th } from 'date-fns/locale';
         saveProjectAndDisplayIt: function(){
             toDoListModel.submitTasksToStorage("project");
             toDoListView.displayLastProjectAdded();
+        },
+
+        saveTaskInProjectAndDisplayIt: function(){ 
+            var that = this.parentNode.parentNode;
+            const DOMFromProject = toDoListView.cacheDynamicDom(that);
+            toDoListModel.submitTasksToStorage("taskInProject",DOMFromProject);
+            var thatProject = this.parentNode.parentNode.parentNode;
+            toDoListView.displayTaskInProject(thatProject);
         }
 
     };
@@ -191,7 +215,7 @@ import { th } from 'date-fns/locale';
 
         },
 
-        render: function(tasksToLoad){
+        render: function(tasksToLoad,project_header_to_append_to){
 
             var listStorageArr = [];
                 
@@ -205,19 +229,14 @@ import { th } from 'date-fns/locale';
 
             } else if (tasksToLoad == "tasksInProjects"){
 
-                listStorageArr = toDoList.getCurrentTasks();
+                listStorageArr = toDoList.getLastAddedTask();
             }
 
             listStorageArr.forEach(element => {
-                
+
                 if(element['task-type']=="standard"){
 
                     if(element['task-status']=="pending") {
-
-
-                        if(tasksToLoad == "tasksInProjects"){
-
-                        }
 
                         let create_new_added_fields = document.createElement('div');
                         create_new_added_fields.classList.add('new-added-fields');
@@ -385,7 +404,6 @@ import { th } from 'date-fns/locale';
             
             let current_project_add_collapsible = this.parentNode.parentNode;
             current_project_add_collapsible.classList.add('new-task-fields');
-            console.log(current_project_add_collapsible);
             current_project_add_collapsible.classList.remove('active-new-task-fields');
             //current_project_add_collapsible.remove();
         
@@ -393,7 +411,6 @@ import { th } from 'date-fns/locale';
 
         addTaskToProject: function(){
 
-            console.log(this.parentNode.parentNode.parentNode);
             let project_to_append_to = this.parentNode.parentNode.parentNode;
             
             let dynamic_new_task_fields = document.createElement('div');
@@ -467,7 +484,7 @@ import { th } from 'date-fns/locale';
             let dynamic_save_task = document.createElement('button');
             dynamic_save_task.classList.add('save-task','material-symbols-outlined');
             dynamic_save_task.textContent = 'add_task';
-            dynamic_save_task.addEventListener('click',toDoListView.addTaskToProject);
+            dynamic_save_task.addEventListener('click',toDoList.saveTaskInProjectAndDisplayIt);
             dynamic_task_buttons.appendChild(dynamic_save_task);
 
             let dynamic_cancel_task = document.createElement('button');
@@ -498,7 +515,12 @@ import { th } from 'date-fns/locale';
             toDoListView.renderProjects();
         },
 
+        displayTaskInProject: function(context) {
+            let project_header_to_append_to = context.querySelector('.new-added-project');
+            toDoListView.render("tasksInProjects",project_header_to_append_to)
+ 
 
+        },
 
         hideOrShowDescription: function() {
             let task_info = this;
@@ -512,6 +534,21 @@ import { th } from 'date-fns/locale';
 
         cleanInputsWithTaskAfterSubmit: function() {
 
+        },
+
+        cacheDynamicDom: function(contextParam){
+ 
+            let context_utility_buttons = contextParam.querySelector('.task-buttons');
+            let context_time_inputs = context_utility_buttons.querySelector('.time-inputs');
+            
+            let this_task_name = contextParam.querySelector('.task-name').value;
+            let this_task_description = contextParam.querySelector('.task-description').value;
+            let this_task_deadline = context_time_inputs.querySelector('.task-deadline').value;
+            let this_task_priority = context_time_inputs.querySelector('#task-priority').value;
+            
+ 
+            return {this_task_name,this_task_description,this_task_deadline,this_task_priority}
+            
         },
 
         createNewTask: function(){

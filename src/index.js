@@ -98,7 +98,29 @@ import { th } from 'date-fns/locale';
                 if(localStorage.hasOwnProperty(i)){
                     let localStorageObj = localStorage[i];
                     let parsedLocalStorageObj = JSON.parse(localStorageObj);
-                    if(parsedLocalStorageObj['task-status']=='pending'){
+                    if(parsedLocalStorageObj['task-status']=='pending' && parsedLocalStorageObj['task-project']=="regular"){
+                        listStorageArr.push(parsedLocalStorageObj);
+                    }
+                }
+            }
+
+            listStorageArr.sort((a, b) => {
+                return a['task-id'] - b['task-id'];
+            });
+
+            return listStorageArr
+        },
+
+        getProjectTasks: function(){
+
+            let listStorageArr = [];
+            let index = 1;
+            
+            for(var i in localStorage){
+                if(localStorage.hasOwnProperty(i)){
+                    let localStorageObj = localStorage[i];
+                    let parsedLocalStorageObj = JSON.parse(localStorageObj);
+                    if(parsedLocalStorageObj['task-status']=='pending' && parsedLocalStorageObj['task-project']!="regular"){
                         listStorageArr.push(parsedLocalStorageObj);
                     }
                 }
@@ -240,6 +262,9 @@ import { th } from 'date-fns/locale';
             } else if (tasksToLoad == "tasksInProjects"){
 
                 listStorageArr = toDoList.getLastAddedTask();
+            
+            }  else if (tasksToLoad== "projectTasksOnly"){
+                listStorageArr = toDoList.getProjectTasks();
             }
 
             listStorageArr.forEach(element => {
@@ -316,8 +341,10 @@ import { th } from 'date-fns/locale';
 
             var listStorageArr = [];
 
-            listStorageArr = toDoList.getCurrentTasks();
-     
+            listStorageArr = toDoList.getProjectTasks();
+            
+            console.log(listStorageArr);
+
             listStorageArr.forEach(element => {
 
                 if (element['task-type']=="project"){
@@ -360,7 +387,7 @@ import { th } from 'date-fns/locale';
                     
                     listStorageArr.forEach(element => {
                         
-                        if(element['task-project']==current_project && element['task-type']=="project"){
+                        if(element['task-project']==current_project){
                             console.log(element['task-name']);
 
                             let create_new_added_fields = document.createElement('div');
@@ -434,7 +461,7 @@ import { th } from 'date-fns/locale';
 
         renderTasksInProject: function(){
 
-            toDoListView.render("tasksInProjects");
+            toDoListView.render("projectTasksOnly");
 
         },
 
@@ -535,21 +562,6 @@ import { th } from 'date-fns/locale';
             dynamic_task_list_priority.id = 'task-priority';
             dynamic_task_list_priority.setAttribute('list','priority');
             dynamic_time_inputs.appendChild(dynamic_task_list_priority);
-
-            /*
-            let dynamic_task_list_priority_dtlst = document.createElement('datalist');
-            dynamic_task_list_priority_dtlst.id = 'task-priority'
-            
-            dynamic_task_list_priority_options.forEach(function(item){
-                var option = document.createElement('option');
-                option.value = item;
-                dynamic_task_list_priority.appendChild(option);
-            });
-
-            let dynamic_task_list_datalist = document.createElement('datalist');
-            dynamic_task_list_datalist.
-            dynamic_time_inputs.appendChild(dynamic_task_list_priority);
-            */
             
             let dynamic_utility_buttons = document.createElement('div');
             dynamic_utility_buttons.classList.add('utility-buttons');

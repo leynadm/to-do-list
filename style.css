@@ -65,6 +65,9 @@ body {
     display: flex;
     align-items: center;
     margin-top: 1rem;
+    font-weight: bold;
+    padding:1em;
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
 }
 
 
@@ -80,21 +83,24 @@ body {
 
 .new-task-fields {
     display: none;
+    margin: 0;
 }
 
 .active-new-task-fields {
+    margin-top: 1.5rem;
     display: grid;
     grid-template-rows: 1fr 2fr 1fr;
     transition: width 2s, height 2s;
+    margin-bottom: 1.5rem;
 }
 
 .new-added-fields{
     display: grid;
     justify-content: space-between;
-    margin-top: 1rem;
+    margin-top: 0.75rem;
     text-decoration:none;
     color:#000;
-    background:#ffc;
+    background: yellowgreen;
     padding:1em;
     box-shadow: 5px 5px 7px rgba(33,33,33,.7);
 }
@@ -105,13 +111,13 @@ body {
 }
 
 .new-added-fields:nth-child(3){
-    transform:rotate(-2deg);
+    transform:rotate(-0.5deg);
     position:relative;
     top:-5px;
 }
 
 .new-added-fields:nth-child(5){
-    transform:rotate(1.5deg);
+    transform:rotate(2.8deg);
     position:relative;
     top:-10px;
 }
@@ -123,7 +129,7 @@ body {
 }
 
 .new-added-fields:nth-child(9){
-    transform:rotate(1deg);
+    transform:rotate(.7deg);
     position:relative;
     top: 10px;
 }
@@ -190,6 +196,10 @@ button {
     display: flex;
     align-items: center;
     margin-top: 2rem;
+    font-weight: bold;
+    padding:1em;
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
+
 }
 
 .project-utility-buttons{
@@ -202,8 +212,25 @@ button {
 }
 
 .new-project-header{
+    background-color: cornflowerblue;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-weight: bold;
+    padding:1em;
+    box-shadow: 5px 5px 7px rgba(33,33,33,.7);
 }
+
+.project-tasks .new-added-fields {
+    margin-left: 1rem;
+}
+
+.tasks {
+    margin-left: 1rem;
+}
+
+.projects {
+    margin-bottom: 1rem;
+}
+
 

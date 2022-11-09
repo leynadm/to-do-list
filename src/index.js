@@ -142,6 +142,15 @@ import { th } from 'date-fns/locale';
             return lastItemAddedArr
         },
 
+        getLastAddedProject: function(){
+
+            let listStorageArr = this.getCurrentTasks();
+            let lastItemAdded = listStorageArr[listStorageArr.length-1];
+            let lastItemAddedArr = [];
+            lastItemAddedArr.push(lastItemAdded)
+            return lastItemAddedArr
+        },
+
 
         saveTaskAndDisplayIt:function(){
             toDoListModel.submitTasksToStorage("standard");
@@ -337,12 +346,18 @@ import { th } from 'date-fns/locale';
             });
         },
 
-        renderProjects: function(){
+        renderProjects: function(projectsToLoad){
 
             var listStorageArr = [];
 
-            listStorageArr = toDoList.getProjectTasks();
+            if(projectsToLoad=="renderLastProject"){
+                listStorageArr = toDoList.getLastAddedProject();
             
+            } else {
+            
+                listStorageArr = toDoList.getProjectTasks();
+            }
+
             console.log(listStorageArr);
 
             listStorageArr.forEach(element => {
@@ -598,7 +613,7 @@ import { th } from 'date-fns/locale';
         },
 
         displayLastProjectAdded: function(){
-            toDoListView.renderProjects();
+            toDoListView.renderProjects("renderLastProject");
         },
 
         displayTaskInProject: function(context) {

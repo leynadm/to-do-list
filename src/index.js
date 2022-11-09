@@ -37,6 +37,7 @@ import { th } from 'date-fns/locale';
 
             if(taskType == "standard"){
                 let taskObject = {
+                    'task-project':'regular',
                     'task-type': 'standard',
                     'task-id':lastIndex+1,
                     'task-name':toDoListView.cacheDom().task_name,
@@ -62,7 +63,8 @@ import { th } from 'date-fns/locale';
             }  else if (taskType = "taskInProject"){
                 
                 let taskObject = {
-                    'task-type': 'project',
+                    'task-project':secondParam.this_project_name,
+                    'task-type': 'standard',
                     'task-id':lastIndex+1,
                     'task-name': secondParam.this_task_name,
                     'task-description': secondParam.this_task_description,
@@ -215,10 +217,18 @@ import { th } from 'date-fns/locale';
 
         },
 
-        render: function(tasksToLoad,project_header_to_append_to){
+        render: function(tasksToLoad,paramContext){
+
+            var mainDivToAppendTo;
+
+            if(paramContext){
+                mainDivToAppendTo = paramContext.querySelector('.project-tasks');
+            } else {
+                mainDivToAppendTo = toDoListView.cacheDom().tasks;
+            }
 
             var listStorageArr = [];
-                
+
             if (tasksToLoad== "renderAllTasks"){
 
                 listStorageArr = toDoList.getCurrentTasks();
@@ -240,7 +250,7 @@ import { th } from 'date-fns/locale';
 
                         let create_new_added_fields = document.createElement('div');
                         create_new_added_fields.classList.add('new-added-fields');
-                        toDoListView.cacheDom().tasks.appendChild(create_new_added_fields);
+                        mainDivToAppendTo.appendChild(create_new_added_fields);
                         create_new_added_fields.addEventListener('click',this.hideOrShowDescription);
 
                         let create_task_high_view = document.createElement('div');
@@ -313,6 +323,7 @@ import { th } from 'date-fns/locale';
                 if (element['task-type']=="project"){
                     
                     let current_project = element['task-name'];
+                    current_project = current_project.toUpperCase();
 
                     let create_new_added_project = document.createElement('div');
                     create_new_added_project.classList.add('new-added-project');
@@ -343,12 +354,73 @@ import { th } from 'date-fns/locale';
                     add_task_to_project.addEventListener('click',toDoListView.addTaskToProject);
                     create_project_utility_buttons.appendChild(add_task_to_project);
 
-                
+                    let project_tasks = document.createElement('div');
+                    project_tasks.classList.add('project-tasks');
+                    create_new_added_project.appendChild(project_tasks);
+                    
                     listStorageArr.forEach(element => {
                         
-                        if(element['task-name']==current_project){
+                        if(element['task-project']==current_project && element['task-type']=="project"){
+                            console.log(element['task-name']);
+
+                            let create_new_added_fields = document.createElement('div');
+                            create_new_added_fields.classList.add('new-added-fields');
+                            project_tasks.appendChild(create_new_added_fields);
+                            create_new_added_fields.addEventListener('click',this.hideOrShowDescription);
+    
+                            let create_task_high_view = document.createElement('div');
+                            create_task_high_view.classList.add('task-high-view');
+                            create_new_added_fields.appendChild(create_task_high_view);
                             
+                            let create_task_name = document.createElement('div')
+                            create_task_name.classList.add('task-name');
+                            create_task_name.textContent = element['task-name'];
+                            create_task_high_view.appendChild(create_task_name);
                             
+                            let create_task_description = document.createElement('div');
+                            create_task_description.classList.add('task-description-hidden');
+                            create_task_description.textContent = element['task-description'];
+                            create_new_added_fields.appendChild(create_task_description);
+                            
+                            let create_task_interaction = document.createElement('div');
+                            create_task_interaction.classList.add('task-interaction');
+                            create_new_added_fields.appendChild(create_task_interaction);
+                
+                            let create_button_delete = document.createElement('button');
+                            create_button_delete.classList.add('button-delete','material-symbols-outlined');
+                            create_button_delete.textContent = 'delete';
+                            create_task_interaction.appendChild(create_button_delete);
+                            create_button_delete.addEventListener('click',toDoListView.addEventToDeleteButton);
+            
+                            let create_button_complete = document.createElement('button');
+                            create_button_complete.classList.add('button-complete','material-symbols-outlined');
+                            create_button_complete.textContent = 'task';
+                            create_task_interaction.appendChild(create_button_complete);
+                            create_button_complete.addEventListener('click',toDoListView.addEventToCompleteButton);
+            
+                            let create_task_details = document.createElement('div');
+                            create_task_details.classList.add('task-details');
+                            create_new_added_fields.appendChild(create_task_details);
+                
+                            let create_task_deadline = document.createElement('div');
+                            create_task_deadline.classList.add('task-deadline');
+                            create_task_deadline.textContent = element['task-deadline'];
+                            create_task_details.appendChild(create_task_deadline);
+                
+                            let create_task_status = document.createElement('div');
+                            create_task_status.classList.add('task-status');
+                            create_task_status.textContent = element['task-status'];
+                            create_task_details.appendChild(create_task_status);
+                
+                            let create_task_priority = document.createElement('div');
+                            create_task_priority.classList.add('task-priority');
+                            create_task_priority.textContent = element['task-priority'];
+                            create_task_details.appendChild(create_task_priority);
+            
+                            let create_task_id = document.createElement('div');
+                            create_task_id.classList.add('task-id');
+                            create_task_id.textContent = element['task-id'];
+                            create_task_details.appendChild(create_task_id);
 
                         }
 
@@ -403,9 +475,11 @@ import { th } from 'date-fns/locale';
         hideAddProjectCollapsible: function() {
             
             let current_project_add_collapsible = this.parentNode.parentNode;
+            console.log("logging current collapsible");
             current_project_add_collapsible.classList.add('new-task-fields');
+            current_project_add_collapsible.remove();
             current_project_add_collapsible.classList.remove('active-new-task-fields');
-            //current_project_add_collapsible.remove();
+       
         
         },
 
@@ -516,10 +590,9 @@ import { th } from 'date-fns/locale';
         },
 
         displayTaskInProject: function(context) {
-            let project_header_to_append_to = context.querySelector('.new-added-project');
-            toDoListView.render("tasksInProjects",project_header_to_append_to)
- 
 
+            toDoListView.render("tasksInProjects",context);
+ 
         },
 
         hideOrShowDescription: function() {
@@ -537,17 +610,24 @@ import { th } from 'date-fns/locale';
         },
 
         cacheDynamicDom: function(contextParam){
- 
+            
+
+
             let context_utility_buttons = contextParam.querySelector('.task-buttons');
             let context_time_inputs = context_utility_buttons.querySelector('.time-inputs');
+    
+            let context_project = contextParam.parentNode;
+            let context_project_header = context_project.querySelector('.new-project-header');
+            let nd_project_name = context_project_header.querySelector('.new-project-name').textContent;
+
             
             let this_task_name = contextParam.querySelector('.task-name').value;
             let this_task_description = contextParam.querySelector('.task-description').value;
             let this_task_deadline = context_time_inputs.querySelector('.task-deadline').value;
             let this_task_priority = context_time_inputs.querySelector('#task-priority').value;
+            let this_project_name = context_project_header.querySelector('.new-project-name').textContent;
             
- 
-            return {this_task_name,this_task_description,this_task_deadline,this_task_priority}
+            return {this_task_name,this_task_description,this_task_deadline,this_task_priority,this_project_name}
             
         },
 

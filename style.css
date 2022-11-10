@@ -43,23 +43,26 @@ body {
 }
 
 
+
 .new-project-fields{
     display: none;
 }
 
+
 .active-new-project-fields {
     display: grid;
-    grid-template-rows: 1fr 2fr 1fr;
+    grid-template-rows: 1fr;
     transition: width 2s, height 2s;
 }
 
+.project-name{
+    margin-top: 1rem;
+}
 
 .new-task{
     min-width: 100%;
 }
 
-.new-project{
-}
 
 .button-container{
     display: flex;
@@ -206,6 +209,7 @@ button {
 .project-utility-buttons{
     display: flex;
     justify-content: right;
+    margin: 0;
 }
 
 .new-added-project{

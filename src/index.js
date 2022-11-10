@@ -63,6 +63,7 @@ import { th } from 'date-fns/locale';
             }  else if (taskType = "taskInProject"){
 
 
+
 /*                console.log("checking the date to add inside taskinprogress");
                 console.log(dateToAdd);
                 console.log(typeof dateToAdd);
@@ -354,7 +355,7 @@ import { th } from 'date-fns/locale';
             
                         let create_task_priority = document.createElement('div');
                         
-                        if(element['task-priority']=="Oh, sh#t!"){
+                        if(element['task-priority']=="OMG!!!"){
                             create_task_priority.classList.add('task-priority','task-priority-high');                            
                         } else if(element['task-priority']=="Sometimes soon") {
                             create_task_priority.classList.add('task-priority','task-priority-medium');
@@ -491,7 +492,7 @@ import { th } from 'date-fns/locale';
                             create_task_details.appendChild(create_task_status);
                 
                             let create_task_priority = document.createElement('div');
-                            if(element['task-priority']=="Oh, sh#t!"){
+                            if(element['task-priority']=="OMG!!!"){
                                 create_task_priority.classList.add('task-priority','task-priority-high');                            
                             } else if(element['task-priority']=="Sometimes soon") {
                                 create_task_priority.classList.add('task-priority','task-priority-medium');
@@ -530,7 +531,18 @@ import { th } from 'date-fns/locale';
         },
 
         hideAddTaskCollapsible: function() {
+
             toDoListView.cacheDom().new_task_fields.classList.remove('active-new-task-fields');
+          
+        },
+
+        hideAddTaskInProjectCollapsible: function(){
+            console.log(this.parentNode.parentNode);
+
+            let current_add_task_in_project_collapsible = this.parentNode.parentNode;
+            current_add_task_in_project_collapsible.classList.add('new-task-fields');
+            current_add_task_in_project_collapsible.classList.remove('active-new-task-fields');
+
         },
 
         addEventToDeleteButton: function(){
@@ -565,11 +577,11 @@ import { th } from 'date-fns/locale';
         hideAddProjectCollapsible: function() {
             
             let current_project_add_collapsible = this.parentNode.parentNode;
-            console.log("logging current collapsible");
-            current_project_add_collapsible.classList.add('new-task-fields');
-            current_project_add_collapsible.remove();
-            current_project_add_collapsible.classList.remove('active-new-task-fields');
-       
+            console.log(current_project_add_collapsible);
+            
+            current_project_add_collapsible.classList.add('new-project-fields');
+            current_project_add_collapsible.classList.remove('active-new-project-fields');
+            
         
         },
 
@@ -577,6 +589,13 @@ import { th } from 'date-fns/locale';
 
             let project_to_append_to = this.parentNode.parentNode.parentNode;
             
+            console.log(project_to_append_to);
+
+            let checkForOpenForm = project_to_append_to.querySelector('.active-new-task-fields');
+            if (checkForOpenForm!=null){
+                return
+            }
+
             let dynamic_new_task_fields = document.createElement('div');
             dynamic_new_task_fields.classList.add('active-new-task-fields');
             project_to_append_to.appendChild(dynamic_new_task_fields);
@@ -618,7 +637,7 @@ import { th } from 'date-fns/locale';
             dynamic_task_deadline.type = "date";
             dynamic_time_inputs.appendChild(dynamic_task_deadline);
 
-            let dynamic_task_list_priority_options = ['Oh, Sh#t!','Sometimes soon','Meh'];
+            let dynamic_task_list_priority_options = ['OMG!!!','Sometimes soon','Meh'];
             
             let dynamic_task_list_priority = document.createElement('input');
             dynamic_task_list_priority.type = 'list';
@@ -639,7 +658,7 @@ import { th } from 'date-fns/locale';
             let dynamic_cancel_task = document.createElement('button');
             dynamic_cancel_task.classList.add('cancel-task','material-symbols-outlined');
             dynamic_cancel_task.textContent = 'cancel';
-            dynamic_cancel_task.addEventListener('click',toDoListView.hideAddProjectCollapsible);
+            dynamic_cancel_task.addEventListener('click',toDoListView.hideAddTaskInProjectCollapsible);
             dynamic_task_buttons.appendChild(dynamic_cancel_task);
 
         },

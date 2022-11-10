@@ -144,7 +144,9 @@ import { th } from 'date-fns/locale';
 
         getLastAddedProject: function(){
 
-            let listStorageArr = this.getCurrentTasks();
+            let listStorageArr = this.getProjectTasks();
+            console.log("getting last added project");
+            console.log(listStorageArr)
             let lastItemAdded = listStorageArr[listStorageArr.length-1];
             let lastItemAddedArr = [];
             lastItemAddedArr.push(lastItemAdded)
@@ -163,6 +165,7 @@ import { th } from 'date-fns/locale';
         },
 
         saveTaskInProjectAndDisplayIt: function(){ 
+            console.log("This is task in project function")
             var that = this.parentNode.parentNode;
             const DOMFromProject = toDoListView.cacheDynamicDom(that);
             toDoListModel.submitTasksToStorage("taskInProject",DOMFromProject);
@@ -358,8 +361,6 @@ import { th } from 'date-fns/locale';
                 listStorageArr = toDoList.getProjectTasks();
             }
 
-            console.log(listStorageArr);
-
             listStorageArr.forEach(element => {
 
                 if (element['task-type']=="project"){
@@ -396,6 +397,13 @@ import { th } from 'date-fns/locale';
                     add_task_to_project.addEventListener('click',toDoListView.addTaskToProject);
                     create_project_utility_buttons.appendChild(add_task_to_project);
 
+                    let add_project_id = document.createElement('div');
+                    add_project_id.classList.add('task-id');
+                    add_project_id.type = "hidden";
+                    add_project_id.textContent = element['task-id'];
+
+                    create_project_utility_buttons.appendChild(add_project_id);
+
                     let project_tasks = document.createElement('div');
                     project_tasks.classList.add('project-tasks');
                     create_new_added_project.appendChild(project_tasks);
@@ -403,7 +411,6 @@ import { th } from 'date-fns/locale';
                     listStorageArr.forEach(element => {
                         
                         if(element['task-project']==current_project){
-                            console.log(element['task-name']);
 
                             let create_new_added_fields = document.createElement('div');
                             create_new_added_fields.classList.add('new-added-fields');
@@ -495,6 +502,7 @@ import { th } from 'date-fns/locale';
             localStorage.removeItem(task_parsed_id);
             task_parsed_info.remove();
         },
+
 
         addEventToCompleteButton: function(){
 
@@ -597,7 +605,35 @@ import { th } from 'date-fns/locale';
         },
 
         deleteProject: function(){
+            console.log("this is for deleting a project.")
+            let task_parsed_info = this.parentNode.parentNode.parentNode;
+            console.log(task_parsed_info);
+            let tasks_in_project = task_parsed_info.querySelector('.project-tasks');
+            console.log(tasks_in_project);
+            let each_task_in_project = tasks_in_project.querySelectorAll('.new-added-fields');
+            
+            each_task_in_project.forEach(element=>{
+                
+                let task_parsed_details = element.querySelector('.task-details');
+                let task_parsed_id = task_parsed_details.querySelector('.task-id').textContent;
+                localStorage.removeItem(task_parsed_id);
+                element.remove();
+            
+            });
 
+            let header_project = task_parsed_info.querySelector('.new-project-header');
+            let project_utilities = header_project.querySelector('.new-project-utility-buttons');
+            let project_id = project_utilities.querySelector('.task-id').textContent;
+            console.log(project_id);
+            
+            localStorage.removeItem(project_id);
+            task_parsed_info.remove();
+            
+
+            //let task_parsed_details = task_parsed_info.querySelector('.task-details');
+            //let task_parsed_id = task_parsed_details.querySelector('.task-id').textContent;
+            //localStorage.removeItem(task_parsed_id);
+            //task_parsed_info.remove();
         },
 
         displayStoredTasks: function(){
@@ -638,8 +674,6 @@ import { th } from 'date-fns/locale';
 
         cacheDynamicDom: function(contextParam){
             
-
-
             let context_utility_buttons = contextParam.querySelector('.task-buttons');
             let context_time_inputs = context_utility_buttons.querySelector('.time-inputs');
     

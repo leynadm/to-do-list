@@ -18,7 +18,6 @@ import { th } from 'date-fns/locale';
             if(localStorage.length==0){
                 lastIndex = 0;
             }
-            
             // get a complete array of indexes
             Object.keys(localStorage).forEach(function(key){
                 let localStorageKey = localStorage.getItem(key);
